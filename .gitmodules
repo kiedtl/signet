@@ -1,0 +1,3 @@
+[submodule "sub/ccommon"]
+	path = sub/ccommon
+	url = git://github.com/lptstr/ccommon.git
