@@ -1,5 +1,6 @@
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #include "types.h"
 #include "argoat.h"
 #include "signet.h"
@@ -30,15 +31,129 @@ main(int argc, char **argv)
 		return 0;
 	}
 
-	generate_matrix(data);
-	fprintf(stdout, "%s\n", data);
+	char matrix[size];
+	for (usize i = 0; i < size; ++i) {
+		matrix[i] = 0;
+	}
+
+	generate_matrix(data, (char*) &matrix);
+	print_matrix((char*) &matrix);
 	return 0;
 }
 
-char*
-generate_matrix(char *data)
+void
+generate_matrix(char *data, char *matrix)
 {
-	return data;
+	usize len = strlen(data);
+	char *ptr = &matrix[start];
+
+	for (usize i = 0; i < len; ++i) {
+		u8 sets[4] = {
+			data[i] >> 3,
+			(data[i] >> 2) & 3,
+			(data[i] >> 4) & 3,
+			data[i] >> 6,
+		};
+
+		for (usize c = 0; c < sizeof(sets); ++c) {
+			/*
+			 * 0 = 00 (move right-up)
+			 * 1 = 01 (move left-up)
+			 * 2 = 10 (move right-down)
+			 * 3 = 11 (move left-down)
+			 */
+			switch (sets[c]) {
+			case 0:
+				ptr = ptr - (width - 1);
+				break;
+			case 1:
+				ptr = ptr + (width + 1);
+				break;
+			case 2:
+				ptr = ptr - (width + 1);
+				break;
+			case 3:
+				ptr = ptr + (width - 1);
+				break;
+			}
+			++(*ptr);
+		}
+	}
+}
+
+void
+print_matrix(char *matrix)
+{
+	/* print header */
+	puts("┌───────────────────────────────────┐");
+
+	/* print data */
+	usize i = 0;
+	for (usize h = 0; h < height; ++h) {
+		fprintf(stdout, "│");
+
+		for (usize w = 0; w < width; ++w) {
+			switch (matrix[i]) {
+			case 0:
+				putchar(' ');
+				break;
+			case 1:
+				putchar('.');
+				break;
+			case 2:
+				putchar('o');
+				break;
+			case 3:
+				putchar('+');
+				break;
+			case 4:
+				putchar('=');
+				break;
+			case 5:
+				putchar('*');
+				break;
+			case 6:
+				putchar('8');
+				break;
+			case 7:
+				putchar('O');
+				break;
+			case 8:
+				putchar('X');
+				break;
+			case 9:
+				putchar('@');
+				break;
+			case 10:
+				putchar('%');
+				break;
+			case 11:
+				putchar('&');
+				break;
+			case 12:
+				putchar('#');
+				break;
+			case 13:
+				putchar('/');
+				break;
+			case 14:
+				putchar('^');
+				break;
+			case 15:
+				putchar('S');
+				break;
+			case 16:
+				putchar('E');
+				break;
+			}
+			++i;
+		}
+
+		puts("│");
+	}
+
+	/* print footer */
+	puts("└───────────────────────────────────┘");
 }
 
 void

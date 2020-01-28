@@ -11,7 +11,7 @@ WARNING	= -Wall -Wextra -pedantic -Wmissing-prototypes \
 INC	= -I. -Isub/ccommon/
 
 CC	= gcc
-CFLAGS	= -std=c99 -O3 $(WARNING) $(INC) -ggdb
+CFLAGS	= -std=c99 $(WARNING) $(INC) -ggdb
 LDFLAGS	= -fuse-ld=gold
 
 SRC	= argoat.c signet.c
