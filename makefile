@@ -6,15 +6,15 @@
 
 NAME	= signet
 WARNING	= -Wall -Wextra -pedantic -Wmissing-prototypes \
-	  -Wold-style-definition -Werror
+	  -Wold-style-definition -Werror -Wno-unused-parameter
 
 INC	= -I. -Isub/ccommon/
 
 CC	= gcc
-CFLAGS	= -std=c99 -O3 $(WARNING) $(INC)
-LDFLAGS	= -fuse-ld=lld
+CFLAGS	= -std=c99 -O3 $(WARNING) $(INC) -ggdb
+LDFLAGS	= -fuse-ld=gold
 
-SRC	= main.c
+SRC	= argoat.c signet.c
 OBJ	= $(SRC:.c=.o)
 
 DESTDIR = /
