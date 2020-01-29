@@ -90,12 +90,18 @@ void
 print_matrix(char *matrix)
 {
 	/* print header */
-	puts("┌───────────────────────────────────┐");
+	if (ascii)
+		puts("+-----------------------------------+");
+	else
+		puts("┌───────────────────────────────────┐");
 
 	/* print data */
 	usize i = 0;
 	for (usize h = 0; h < height; ++h) {
-		fprintf(stdout, "│");
+		if (ascii)
+			fprintf(stdout, "|");
+		else
+			fprintf(stdout, "│");
 
 		for (usize w = 0; w < width; ++w) {
 			switch (matrix[i]) {
@@ -154,11 +160,17 @@ print_matrix(char *matrix)
 			++i;
 		}
 
-		puts("│");
+		if (ascii)
+			puts("|");
+		else
+			puts("│");
 	}
 
 	/* print footer */
-	puts("└───────────────────────────────────┘");
+	if (ascii)
+		puts("+-----------------------------------+");
+	else
+		puts("└───────────────────────────────────┘");
 }
 
 void
