@@ -11,10 +11,15 @@ main(int argc, char **argv)
 	/* parse options with argoat */
 	char *args[arg_max];
 
-	const struct argoat_sprig sprigs[3] = {
+	const struct argoat_sprig sprigs[8] = {
 		{ NULL,      0, NULL,             handle_main },
 		{ "verbose", 0, (void*) &verbose, handle_bool },
 		{ "v",       0, (void*) &verbose, handle_bool },
+		{ "ascii",   0, (void*) &ascii,   handle_bool },
+		{ "a",       0, (void*) &ascii,   handle_bool },
+		{ "help",    0, NULL,             help        },
+		{ "h",       0, NULL,             help        },
+		{ "version", 0, NULL,             version     },
 	};
 
 	struct argoat opts = { sprigs, sizeof(sprigs), args, 0, arg_max };
@@ -166,4 +171,26 @@ void
 handle_bool(void *data, char **pars, const int pars_count)
 {
 	*((bool*) data) = TRUE;
+}
+
+void
+version(void *data, char **pars, const int pars_count)
+{
+	fprintf(stdout, "signify v%s\n", VERSION);
+}
+
+void
+help(void *data, char **pars, const int pars_count)
+{
+	fprintf(stderr, "usage: signify [OPTIONS] [DATA]\n");
+	fprintf(stderr, "Easily compare the data by printing an SSH randomart-like\n");
+	fprintf(stderr, "ASCII art derived from provided data.\n");
+	fprintf(stderr, "OPTIONS:\n");
+	fprintf(stderr, "    -a, --ascii    Use ASCII characters instead of Unicode.\n");
+	fprintf(stderr, "    -v, --verbose  Print verbose information.\n");
+	fprintf(stderr, "    -h, --help     Print this help message and exit.\n");
+	fprintf(stderr, "        --version  Print version and exit.\n\n");
+	fprintf(stderr, "EXAMPLES:\n");
+	fprintf(stderr, "    signify $(b2sum file)\n\n");
+	fprintf(stderr, "Report bugs to https://github.com/kiedtl/signify.\n");
 }
