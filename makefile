@@ -14,7 +14,7 @@ CC	= gcc
 CFLAGS	= -std=c99 $(WARNING) $(INC) -ggdb -fno-stack-protector
 LDFLAGS	= -fuse-ld=gold
 
-SRC	= argoat.c signet.c
+SRC	= argoat.c matrix.c signet.c
 OBJ	= $(SRC:.c=.o)
 
 DESTDIR = /

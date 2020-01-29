@@ -3,6 +3,7 @@
 #include <string.h>
 #include "types.h"
 #include "argoat.h"
+#include "matrix.h"
 #include "signet.h"
 
 int
@@ -50,7 +51,7 @@ void
 generate_matrix(char *data, char *matrix)
 {
 	usize len = strlen(data);
-	char *ptr = &matrix[start];
+	usize ptr = start;
 
 	for (usize i = 0; i < len; ++i) {
 		u8 sets[4] = {
@@ -69,19 +70,21 @@ generate_matrix(char *data, char *matrix)
 			 */
 			switch (sets[c]) {
 			case 0:
-				ptr = ptr - (width - 1);
+				matrix_right_up(matrix, &ptr);
 				break;
 			case 1:
-				ptr = ptr + (width + 1);
+				matrix_left_up(matrix, &ptr);
 				break;
 			case 2:
-				ptr = ptr - (width + 1);
+				matrix_right_down(matrix, &ptr);
 				break;
 			case 3:
-				ptr = ptr + (width - 1);
+				matrix_left_down(matrix, &ptr);
+				break;
+			default:
 				break;
 			}
-			++(*ptr);
+			matrix[ptr] += 1;
 		}
 	}
 }
