@@ -156,6 +156,9 @@ print_matrix(char *matrix)
 			case 16:
 				putchar('E');
 				break;
+			default:
+				putchar('?');
+				break;
 			}
 			++i;
 		}
