@@ -204,5 +204,5 @@ help(void *data, char **pars, const int pars_count)
 	fprintf(stderr, "        --version  Print version and exit.\n\n");
 	fprintf(stderr, "EXAMPLES:\n");
 	fprintf(stderr, "    signify $(b2sum file)\n\n");
-	fprintf(stderr, "Report bugs to https://github.com/kiedtl/signify.\n");
+	fprintf(stderr, "Report bugs to https://github.com/lptstr/signify.\n");
 }
