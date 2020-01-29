@@ -80,7 +80,7 @@ $ make clean signet
 
 ## why?
 
-¯\\_(ツ)_/¯
+¯\\\_(ツ)\_/¯
 
 ## todo
 
