@@ -29,7 +29,7 @@ clean:
 	@echo "\tCC\t\t$@"
 	@$(CC) $(CFLAGS) -c $<
 
-$(NAME): $(OBJ) $(TRMBOX)
+$(NAME): $(OBJ)
 	@echo "\tLD\t\t$(NAME)"
 	@$(CC) -o $@ $^ $(CFLAGS) $(LDFLAGS)
 
@@ -40,4 +40,5 @@ install: $(NAME)
 uninstall:
 	@echo "\tRM\t\t$(DESTDIR)/$(PREFIX)/bin/$(NAME)"
 	@rm -f $(DESTDIR)/$(PREFIX)/bin/$(NAME)
+
 .PHONY: all clean install
