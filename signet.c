@@ -194,13 +194,13 @@ handle_bool(void *data, char **pars, const int pars_count)
 void
 version(void *data, char **pars, const int pars_count)
 {
-	fprintf(stdout, "signify v%s\n", VERSION);
+	fprintf(stdout, "signet v%s\n", VERSION);
 }
 
 void
 help(void *data, char **pars, const int pars_count)
 {
-	fprintf(stderr, "usage: signify [OPTIONS] [DATA]\n");
+	fprintf(stderr, "usage: signet [OPTIONS] [DATA]\n");
 	fprintf(stderr, "Easily compare the data by printing an SSH randomart-like\n");
 	fprintf(stderr, "ASCII art derived from provided data.\n");
 	fprintf(stderr, "OPTIONS:\n");
@@ -209,6 +209,6 @@ help(void *data, char **pars, const int pars_count)
 	fprintf(stderr, "    -h, --help     Print this help message and exit.\n");
 	fprintf(stderr, "        --version  Print version and exit.\n\n");
 	fprintf(stderr, "EXAMPLES:\n");
-	fprintf(stderr, "    signify $(b2sum file)\n\n");
-	fprintf(stderr, "Report bugs to https://github.com/lptstr/signify.\n");
+	fprintf(stderr, "    signet $(b2sum file)\n\n");
+	fprintf(stderr, "Report bugs to https://github.com/lptstr/signet.\n");
 }
