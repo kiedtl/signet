@@ -6,7 +6,7 @@
 
 NAME	= signet
 WARNING	= -Wall -Wextra -pedantic -Wmissing-prototypes \
-	  -Wold-style-definition -Werror -Wno-unused-parameter
+	  -Wold-style-definition -Wno-unused-parameter
 
 INC	= -I. -Isub/ccommon/
 
@@ -26,7 +26,7 @@ clean:
 	rm -f $(NAME) $(OBJ)
 
 .c.o:
-	$(CC) $(CFLAGS) -c $<
+	$(CC) $(CFLAGS) $(CFLAGS_OPT) -c $<
 
 debug: CFLAGS_OPT := -ggdb
 debug: $(NAME)
