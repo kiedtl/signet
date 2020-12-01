@@ -5,9 +5,10 @@
 #include <stdlib.h>
 #include <string.h>
 
-static const size_t width   = 17;
-static const size_t height  =  9;
-static const size_t size    = width * height;
+static const size_t WIDTH   = 17;
+static const size_t HEIGHT  =  9;
+static const size_t SIZE    = HEIGHT * WIDTH;
+static const char  *CHARS = " .o+=*BOX@%&#/^ ";
 
 #include "matrix.c"
 static void generate_matrix(char *data, char *matrix);
@@ -18,8 +19,8 @@ main(int argc, char **argv)
 {
 	/* TODO: support reading from stdin */
 	for (size_t ctr = 1; ctr < (size_t) argc; ++ctr) {
-		char *matrix = alloca(size);
-		memset((void *) matrix, 0x0, size);
+		char *matrix = alloca(SIZE);
+		memset((void *) matrix, 0x0, SIZE);
 
 		generate_matrix(argv[ctr], matrix);
 		print_matrix(argv[ctr], matrix);
@@ -34,7 +35,7 @@ void
 generate_matrix(char *data, char *matrix)
 {
 	size_t len = strlen(data);
-	size_t ptr = size / 2;
+	size_t ptr = SIZE / 2;
 
 	/* mark start position. */
 	matrix[ptr] = -2;
@@ -77,29 +78,25 @@ generate_matrix(char *data, char *matrix)
 void
 print_matrix(char *data, char *matrix)
 {
-	char *chars = " .o+=*BOX@%&#/^ ";
-	size_t max = strlen(chars) - 1;
-
-	char *border = alloca(width + 1); border[width] = '\0';
-	memset((void *) border, '-', width);
+	char *border = alloca(WIDTH + 1); border[WIDTH] = '\0';
+	memset((void *) border, '-', WIDTH);
 
 	/* print header */
-	//printf("data: '%s'\n", data);
 	printf("+%s+\n", border);
 
 	/* print data */
 	size_t i = 0;
-	for (size_t h = 0; h < height; ++h) {
+	for (size_t h = 0; h < HEIGHT; ++h) {
 		printf("|");
 
-		for (size_t w = 0; w < width; ++w, ++i) {
+		for (size_t w = 0; w < WIDTH; ++w, ++i) {
 			if (matrix[i] == -1) {
 				putchar('E');
 			} else if (matrix[i] == -2) {
 				putchar('S');
 			} else {
-				size_t value = MAX((size_t) matrix[i], max);
-				putchar(chars[value]);
+				size_t value = MAX((size_t) matrix[i], sizeof(CHARS));
+				putchar(CHARS[value]);
 			}
 
 			/* unsigned char v = (((size_t)matrix[i])*254)/100;

@@ -1,3 +1,4 @@
 **/*.*.swp
 *.o
 signet
+man/signet.1

@@ -5,19 +5,19 @@ right_up(int *matrix, size_t *i)
 	 * check if on top row,
 	 * excluding top-right corner
 	 */
-	if (*i < (width - 1))
+	if (*i < (WIDTH - 1))
 		++(*i);
 	/* check if top-right corner */
-	else if (*i == (width - 1))
+	else if (*i == (WIDTH - 1))
 		; /* do nothing */
 	/*
 	 * check if right border or bottom-right corner
 	 */
-	else if (*i % width == (width - 1)
-			&& *i < (size - 1))
-		*i -= width;
+	else if (*i % WIDTH == (WIDTH - 1)
+			&& *i < (SIZE - 1))
+		*i -= WIDTH;
 	else
-		*i -= width - 1;
+		*i -= WIDTH - 1;
 }
 
 static void
@@ -28,7 +28,7 @@ left_up(int *matrix, size_t *i)
 	 * excluding top-left corner,
 	 * and move left instead.
 	 */
-	if (*i < width && *i != 0)
+	if (*i < WIDTH && *i != 0)
 		--(*i);
 	/*
 	 * check if on top-left corner
@@ -39,48 +39,48 @@ left_up(int *matrix, size_t *i)
 	 * check if on left edge,
 	 * and move up instead
 	 */
-	else if (*i % width == 0)
-		*i -= width;
+	else if (*i % WIDTH == 0)
+		*i -= WIDTH;
 	else
-		*i -= width + 1;
+		*i -= WIDTH + 1;
 }
 
 static void
 right_down(int *matrix, size_t *i)
 {
 	/* check if on bottom-right corner */
-	if (*i == width - 1)
+	if (*i == WIDTH - 1)
 		; /* do nothing */
 	/*
 	 * check if on bottom edge,
 	 * excluding bottom-right corner,
 	 * and move right
 	 */
-	else if (*i != (size - 1) && *i > (size - width))
+	else if (*i != (SIZE - 1) && *i > (SIZE - WIDTH))
 		++(*i);
 	/* check if on right edge and move down */
-	else if (*i != (size - 1) && *i % width == (width - 1))
-		*i += width;
+	else if (*i != (SIZE - 1) && *i % WIDTH == (WIDTH - 1))
+		*i += WIDTH;
 	else
-		*i += width + 1;
+		*i += WIDTH + 1;
 }
 
 static void
 left_down(int *matrix, size_t *i)
 {
 	/* check if on bottom-left corner */
-	if (*i == (size - (width - 1)))
+	if (*i == (SIZE - (WIDTH - 1)))
 		; /* do nothing */
 	/*
 	 * check if on bottom edge,
 	 * excluding bottom-left corner,
 	 * and move left
 	 */
-	else if (*i > (size - (width - 1)))
+	else if (*i > (SIZE - (WIDTH - 1)))
 		--(*i);
 	/* check if on left edge and move down */
-	else if (*i % width == 0)
-		*i += width;
+	else if (*i % WIDTH == 0)
+		*i += WIDTH;
 	else
-		*i += width - 1;
+		*i += WIDTH - 1;
 }
