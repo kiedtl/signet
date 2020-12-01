@@ -3,7 +3,9 @@
 #include <alloca.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <stdbool.h>
 #include <string.h>
+#include <unistd.h>
 
 static const size_t WIDTH   = 17;
 static const size_t HEIGHT  =  9;
@@ -14,9 +16,13 @@ static const char  *CHARS = " .o+=*BOX@%&#/^ ";
 static void generate_matrix(char *data, char *matrix);
 static void print_matrix(char *data, char *matrix);
 
+static _Bool istty = false;
+
 int
 main(int argc, char **argv)
 {
+	istty = isatty(STDOUT_FILENO);
+
 	/* TODO: support reading from stdin */
 	for (size_t ctr = 1; ctr < (size_t) argc; ++ctr) {
 		char *matrix = alloca(SIZE);
@@ -91,16 +97,15 @@ print_matrix(char *data, char *matrix)
 
 		for (size_t w = 0; w < WIDTH; ++w, ++i) {
 			if (matrix[i] == -1) {
-				putchar('E');
+				if (istty) printf("\x1b[1mE\x1b[m");
+				else putchar('E');
 			} else if (matrix[i] == -2) {
-				putchar('S');
+				if (istty) printf("\x1b[1mS\x1b[m");
+				else putchar('S');
 			} else {
 				size_t value = MAX((size_t) matrix[i], sizeof(CHARS));
 				putchar(CHARS[value]);
 			}
-
-			/* unsigned char v = (((size_t)matrix[i])*254)/100;
-			printf("\x1b[48;2;%d;%d;%dm \x1b[m", v,v,v); */
 		}
 
 		printf("|\n");
