@@ -8,51 +8,35 @@ signet attempts to make it easy to visually compare hashes/data by generating a
 randomart-esque ASCII art:
 
 ```
-$ md5sum ~/test
-ce6ac5212a668f2ab3e15ca464e68bbd /home/kiedtl/test
-$ ./signet ce6ac5212a668f2ab3e15ca464e68bbd
-┌───────────────────────────────────┐
-│                   ##^S#+          │
-│                  8+X+O+..         │
-│                 = o               │
-│                . +                │
-│                 + .               │
-│                + .                │
-│               . +                 │
-│                  =                │
-│                 . .               │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-└───────────────────────────────────┘
+$ md5sum ./signet /usr/bin/cat
+abec4845b415da8d23408afbb4666608  ./signet
+7e9d213e404ad3bb82e4ebb2e1f2c1b3  /usr/bin/cat
 
-$ md5sum ./signet
-e895193ed7ebe2e7b841db138c480ba9 ./signet
-$ ./signet e895193ed7ebe2e7b841db138c480ba9
-┌───────────────────────────────────┐
-│               +#@+++++++          │
-│              ..*Oo.+=. .+         │
-│                .= ..   .          │
-│                + .                │
-│                 =                 │
-│                . +                │
-│                   =               │
-│                + + =              │
-│                 @ =               │
-│                o =                │
-│                 .                 │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-│                                   │
-└───────────────────────────────────┘
+$ ./signet abec4845b415da8d23408afbb4666608
++-----------------+
+|          . =oXXX|
+|           o o XX|
+|        . .     E|
+|         o       |
+|        S        |
+|                 |
+|                 |
+|                 |
+|                 |
++-----------------+
+
+$ signet 7e9d213e404ad3bb82e4ebb2e1f2c1b3
++-----------------+
+|        o.+.o.XXE|
+|         + + . XX|
+|        . o     .|
+|         o       |
+|        S        |
+|                 |
+|                 |
+|                 |
+|                 |
++-----------------+
 ```
 
 ## how?
