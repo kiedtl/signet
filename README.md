@@ -73,8 +73,8 @@ is more fully described in the following two locations:
 
 **tl;dr**:
 ```
-$ git clone --recurse git://github.com/lptstr/signet.git
-$ make clean signet
+$ git clone git://github.com/lptstr/signet.git
+$ make clean all
 # make install
 ```
 
@@ -89,8 +89,8 @@ $ make clean signet
 
 ## disclaimer
 
-This software is in beta; expect bugs. Do not use for any security-related
-purpose.
+This software is in beta; expect bugs. If you do use it, check hashes
+manually in addition to using signet.
 
 ## license
 
