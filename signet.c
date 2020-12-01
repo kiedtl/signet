@@ -1,67 +1,53 @@
+#define MAX(X, V) ((X) > (V) ? (V) : (X))
+
+#include <alloca.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "types.h"
-#include "argoat.h"
-#include "matrix.h"
-#include "signet.h"
+
+static const size_t width   = 17;
+static const size_t height  =  9;
+static const size_t size    = width * height;
+
+#include "matrix.c"
+static void generate_matrix(char *data, char *matrix);
+static void print_matrix(char *data, char *matrix);
 
 int
 main(int argc, char **argv)
 {
-	/* parse options with argoat */
-	char *args[arg_max];
-
-	const struct argoat_sprig sprigs[8] = {
-		{ NULL,      0, NULL,             handle_main },
-		{ "verbose", 0, (void*) &verbose, handle_bool },
-		{ "v",       0, (void*) &verbose, handle_bool },
-		{ "ascii",   0, (void*) &ascii,   handle_bool },
-		{ "a",       0, (void*) &ascii,   handle_bool },
-		{ "help",    0, NULL,             help        },
-		{ "h",       0, NULL,             help        },
-		{ "version", 0, NULL,             version     },
-	};
-
-	struct argoat opts = { sprigs, sizeof(sprigs), args, 0, arg_max };
-	argoat_graze(&opts, argc, argv);
-
-	char *data;
-
 	/* TODO: support reading from stdin */
-	if (arg_len > 0)
-		data = args[0];
-	else {
-		if (verbose)
-			fprintf(stderr, "warn: no arguments, exiting now...\n");
-		return 0;
+	for (size_t ctr = 1; ctr < (size_t) argc; ++ctr) {
+		char *matrix = alloca(size);
+		memset((void *) matrix, 0x0, size);
+
+		generate_matrix(argv[ctr], matrix);
+		print_matrix(argv[ctr], matrix);
+
+		printf("\n");
 	}
 
-	char matrix[size];
-	for (usize i = 0; i < size; ++i) {
-		matrix[i] = 0;
-	}
-
-	generate_matrix(data, (char*) &matrix);
-	print_matrix((char*) &matrix);
 	return 0;
 }
 
 void
 generate_matrix(char *data, char *matrix)
 {
-	usize len = strlen(data);
-	usize ptr = start;
+	size_t len = strlen(data);
+	size_t ptr = size / 2;
 
-	for (usize i = 0; i < len; ++i) {
-		u8 sets[4] = {
+	/* mark start position. */
+	matrix[ptr] = -2;
+
+	for (size_t i = 0; i < len; ++i) {
+		unsigned char sets[4] = {
 			data[i] >> 3,
 			(data[i] >> 2) & 3,
 			(data[i] >> 4) & 3,
 			data[i] >> 6,
 		};
 
-		for (usize c = 0; c < sizeof(sets); ++c) {
+		for (size_t c = sizeof(sets); c > 0; --c) {
 			/*
 			 * 0 = 00 (move right-up)
 			 * 1 = 01 (move left-up)
@@ -69,146 +55,60 @@ generate_matrix(char *data, char *matrix)
 			 * 3 = 11 (move left-down)
 			 */
 			switch (sets[c]) {
-			case 0:
-				matrix_right_up(matrix, &ptr);
-				break;
-			case 1:
-				matrix_left_up(matrix, &ptr);
-				break;
-			case 2:
-				matrix_right_down(matrix, &ptr);
-				break;
-			case 3:
-				matrix_left_down(matrix, &ptr);
-				break;
-			default:
+			break; case 0:
+				right_up(matrix, &ptr);
+			break; case 1:
+				left_up(matrix, &ptr);
+			break; case 2:
+				right_down(matrix, &ptr);
+			break; case 3:
+				left_down(matrix, &ptr);
+			break; default:
 				break;
 			}
 			matrix[ptr] += 1;
 		}
 	}
+
+	/* mark end position. */
+	matrix[ptr] = -1;
 }
 
 void
-print_matrix(char *matrix)
+print_matrix(char *data, char *matrix)
 {
+	char *chars = " .o+=*BOX@%&#/^ ";
+	size_t max = strlen(chars) - 1;
+
+	char *border = alloca(width + 1); border[width] = '\0';
+	memset((void *) border, '-', width);
+
 	/* print header */
-	if (ascii)
-		puts("+-----------------------------------+");
-	else
-		puts("┌───────────────────────────────────┐");
+	//printf("data: '%s'\n", data);
+	printf("+%s+\n", border);
 
 	/* print data */
-	usize i = 0;
-	for (usize h = 0; h < height; ++h) {
-		if (ascii)
-			fprintf(stdout, "|");
-		else
-			fprintf(stdout, "│");
+	size_t i = 0;
+	for (size_t h = 0; h < height; ++h) {
+		printf("|");
 
-		for (usize w = 0; w < width; ++w) {
-			switch (matrix[i]) {
-			case 0:
-				putchar(' ');
-				break;
-			case 1:
-				putchar('.');
-				break;
-			case 2:
-				putchar('o');
-				break;
-			case 3:
-				putchar('+');
-				break;
-			case 4:
-				putchar('=');
-				break;
-			case 5:
-				putchar('*');
-				break;
-			case 6:
-				putchar('8');
-				break;
-			case 7:
-				putchar('O');
-				break;
-			case 8:
-				putchar('X');
-				break;
-			case 9:
-				putchar('@');
-				break;
-			case 10:
-				putchar('%');
-				break;
-			case 11:
-				putchar('&');
-				break;
-			case 12:
-				putchar('#');
-				break;
-			case 13:
-				putchar('/');
-				break;
-			case 14:
-				putchar('^');
-				break;
-			case 15:
-				putchar('S');
-				break;
-			case 16:
+		for (size_t w = 0; w < width; ++w, ++i) {
+			if (matrix[i] == -1) {
 				putchar('E');
-				break;
-			default:
-				putchar('?');
-				break;
+			} else if (matrix[i] == -2) {
+				putchar('S');
+			} else {
+				size_t value = MAX((size_t) matrix[i], max);
+				putchar(chars[value]);
 			}
-			++i;
+
+			/* unsigned char v = (((size_t)matrix[i])*254)/100;
+			printf("\x1b[48;2;%d;%d;%dm \x1b[m", v,v,v); */
 		}
 
-		if (ascii)
-			puts("|");
-		else
-			puts("│");
+		printf("|\n");
 	}
 
 	/* print footer */
-	if (ascii)
-		puts("+-----------------------------------+");
-	else
-		puts("└───────────────────────────────────┘");
-}
-
-void
-handle_main(void *data, char **pars, const int pars_count)
-{
-	arg_len = (usize) pars_count;
-}
-
-void
-handle_bool(void *data, char **pars, const int pars_count)
-{
-	*((bool*) data) = TRUE;
-}
-
-void
-version(void *data, char **pars, const int pars_count)
-{
-	fprintf(stdout, "signet v%s\n", VERSION);
-}
-
-void
-help(void *data, char **pars, const int pars_count)
-{
-	fprintf(stderr, "usage: signet [OPTIONS] [DATA]\n");
-	fprintf(stderr, "Easily compare the data by printing an SSH randomart-like\n");
-	fprintf(stderr, "ASCII art derived from provided data.\n");
-	fprintf(stderr, "OPTIONS:\n");
-	fprintf(stderr, "    -a, --ascii    Use ASCII characters instead of Unicode.\n");
-	fprintf(stderr, "    -v, --verbose  Print verbose information.\n");
-	fprintf(stderr, "    -h, --help     Print this help message and exit.\n");
-	fprintf(stderr, "        --version  Print version and exit.\n\n");
-	fprintf(stderr, "EXAMPLES:\n");
-	fprintf(stderr, "    signet $(b2sum file)\n\n");
-	fprintf(stderr, "Report bugs to https://github.com/lptstr/signet.\n");
+	printf("+%s+\n", border);
 }
