@@ -11,10 +11,10 @@ CMD = @
 DESTDIR =
 PREFIX  = /usr/local
 
-CC = cc
+CC = clang
 LD = gold
 
 RELEASE_CFLAGS  = -Os
 RELEASE_LDFLAGS = -march=native -flto -s
-DEBUG_CFLAGS    = -Og -ggdb
+DEBUG_CFLAGS    = -Og -ggdb -fsanitize=address
 DEBUG_LDFLAGS   =
