@@ -1,22 +1,26 @@
-#define MAX(X, V) ((X) > (V) ? (V) : (X))
-
-#include <alloca.h>
 #include <stdio.h>
-#include <stdlib.h>
-#include <stdbool.h>
 #include <string.h>
 #include <unistd.h>
 
-static const size_t WIDTH   = 17;
-static const size_t HEIGHT  =  9;
-static const size_t SIZE    = HEIGHT * WIDTH;
-static const char  *CHARS = " .o+=*BOX@%&#/^ ";
+/* dimensions of matrix. */
+static const size_t WIDTH  = 17;
+static const size_t HEIGHT =  9;
+static const size_t SIZE   = HEIGHT * WIDTH;
+
+/* characters used to print matrix. S and E are special values
+ * used to store the start and end positions. */
+static const char *CHARS = " .o+=*BOX@%&#/^SE";
+static const size_t MAX_CELL_VALUE = 14;
 
 #include "matrix.c"
-static void generate_matrix(char *data, char *matrix);
-static void print_matrix(char *data, char *matrix);
+static void (*const MOVEMENTS[])(size_t *) = {
+	&right_up, &left_up, &right_down, &left_down,
+};
 
-static _Bool istty = false;
+static void mkmatrix(char *data, size_t *matrix);
+static void display(size_t *matrix);
+
+static _Bool istty = 0;
 
 int
 main(int argc, char **argv)
@@ -25,92 +29,75 @@ main(int argc, char **argv)
 
 	/* TODO: support reading from stdin */
 	for (size_t ctr = 1; ctr < (size_t) argc; ++ctr) {
-		char *matrix = alloca(SIZE);
-		memset((void *) matrix, 0x0, SIZE);
+		size_t matrix[SIZE];
+		for (size_t i = 0; i < SIZE; ++i) matrix[i] = 0;
 
-		generate_matrix(argv[ctr], matrix);
-		print_matrix(argv[ctr], matrix);
-
-		printf("\n");
+		mkmatrix(argv[ctr], (size_t *) &matrix);
+		display((size_t *) &matrix);
 	}
 
 	return 0;
 }
 
-void
-generate_matrix(char *data, char *matrix)
+static void
+mkmatrix(char *data, size_t *matrix)
 {
 	size_t len = strlen(data);
 	size_t ptr = SIZE / 2;
 
-	/* mark start position. */
-	matrix[ptr] = -2;
-
 	for (size_t i = 0; i < len; ++i) {
-		unsigned char sets[4] = {
-			data[i] >> 3,
-			(data[i] >> 2) & 3,
-			(data[i] >> 4) & 3,
+		unsigned char bits[] = {
 			data[i] >> 6,
+			(data[i] >> 4) & 3,
+			(data[i] >> 2) & 3,
+			data[i] >> 3,
 		};
 
-		for (size_t c = sizeof(sets); c > 0; --c) {
+		for (size_t c = 0; c < 3; ++c) {
 			/*
 			 * 0 = 00 (move right-up)
 			 * 1 = 01 (move left-up)
 			 * 2 = 10 (move right-down)
 			 * 3 = 11 (move left-down)
 			 */
-			switch (sets[c]) {
-			break; case 0:
-				right_up(matrix, &ptr);
-			break; case 1:
-				left_up(matrix, &ptr);
-			break; case 2:
-				right_down(matrix, &ptr);
-			break; case 3:
-				left_down(matrix, &ptr);
-			break; default:
-				break;
-			}
-			matrix[ptr] += 1;
+			(*MOVEMENTS[bits[c]])(&ptr);
+
+			if (matrix[ptr] <= MAX_CELL_VALUE)
+				++matrix[ptr];
 		}
 	}
 
-	/* mark end position. */
-	matrix[ptr] = -1;
+	/* mark start/end position. */
+	matrix[SIZE / 2] = 15;
+	matrix[ptr] = 16;
 }
 
-void
-print_matrix(char *data, char *matrix)
+static void
+display(size_t *matrix)
 {
-	char *border = alloca(WIDTH + 1); border[WIDTH] = '\0';
-	memset((void *) border, '-', WIDTH);
+	char border[WIDTH + 1]; border[WIDTH] = '\0';
+	memset((void *) &border, '-', WIDTH);
 
-	/* print header */
-	printf("+%s+\n", border);
+	printf("+%s+\n", (char *) &border);
 
-	/* print data */
 	size_t i = 0;
 	for (size_t h = 0; h < HEIGHT; ++h) {
 		printf("|");
 
 		for (size_t w = 0; w < WIDTH; ++w, ++i) {
-			if (matrix[i] == -1) {
-				if (istty) printf("\x1b[1mE\x1b[m");
-				else putchar('E');
-			} else if (matrix[i] == -2) {
-				if (istty) printf("\x1b[1mS\x1b[m");
-				else putchar('S');
-			} else {
-				size_t value = MAX((size_t) matrix[i], sizeof(CHARS));
-				putchar(CHARS[value]);
-			}
+			unsigned char value = CHARS[matrix[i]];
+
+			/* print the start/end positions (S or E in bold
+			 * using terminal escape sequences, if stdout is a
+			 * terminal */
+			if (matrix[i] > MAX_CELL_VALUE && istty)
+				printf("\x1b[1m%c\x1b[m", value);
+			else
+				putchar(value);
 		}
 
 		printf("|\n");
 	}
 
-	/* print footer */
-	printf("+%s+\n", border);
+	printf("+%s+\n\n", (char *) &border);
 }
