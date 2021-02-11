@@ -3,8 +3,8 @@
 #include <unistd.h>
 
 /* dimensions of matrix. */
-static const size_t WIDTH  = 17;
-static const size_t HEIGHT =  9;
+static const size_t WIDTH  = 20;
+static const size_t HEIGHT = 11;
 static const size_t SIZE   = HEIGHT * WIDTH;
 
 /* characters used to print matrix. S and E are special values
