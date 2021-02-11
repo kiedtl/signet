@@ -8,20 +8,23 @@
 
 include config.mk
 
+VERSION = 0.2.0
 BIN     = signet
+PKGNAME  = $(NAME)-$(shell uname -s)-$(shell uname -m)-$(VERSION)
 
 SRC     = signet.c
 OBJ     = $(SRC:.c=.o)
 
-WARNING = -Wall -Wpedantic -Wextra -Wold-style-definition \
-	  -Wmissing-prototypes -Winit-self -Wfloat-equal -Wstrict-prototypes \
-	  -Wredundant-decls -Wendif-labels -Wstrict-aliasing=2 -Woverflow \
-	  -Wformat=2 -Wmissing-include-dirs -Wno-trigraphs \
-	  -Wno-format-nonliteral -Wno-incompatible-pointer-types \
-	  -Wno-unused-parameter
+WARNING  = -Wall -Wpedantic -Wextra -Wold-style-definition -Wmissing-prototypes \
+           -Winit-self -Wfloat-equal -Wstrict-prototypes -Wredundant-decls \
+           -Wendif-labels -Wstrict-aliasing=2 -Woverflow -Wformat=2 -Wtrigraphs \
+           -Wmissing-include-dirs -Wno-format-nonliteral -Wunused-parameter \
+           -Wincompatible-pointer-types \
+           -Werror=implicit-function-declaration -Werror=return-type
+DEF      = -DVERSION=\"$(VERSION)\"
 INC     = -I.
 DEF     =
-CFLAGS  = -std=c99 $(WARNING) $(INC)
+CFLAGS  = -std=c99 $(DEF) $(WARNING) $(INC) -funsigned-char
 LDFLAGS = -fuse-ld=$(LD)
 
 all: man/$(BIN).1 debug
@@ -50,12 +53,12 @@ clean:
 	$(CMD)rm -f $(BIN) $(OBJ) man/$(BIN).1
 	$(CMD)rm -rf dist/ *.xz
 
-dist: clean
-	$(CMD)mkdir -p dist
-	$(CMD)cp -r config.mk Makefile *.md lib man src sub \
-		dist
-	$(CMD)tar -cvf - dist | xz -qcT 0 > lcharmap-v$(VERSION).tar.xz
-	$(CMD)rm -rf dist
+dist: release $(BIN).1
+	$(CMD)mkdir $(PKGNAME)
+	$(CMD)cp $(BIN)   $(PKGNAME)
+	$(CMD)cp $(BIN).1 $(PKGNAME)
+	$(CMD)tar -cf - $(PKGNAME) | xz -qcT0 > $(PKGNAME).tar.xz
+	$(CMD)rm -rf $(PKGNAME)
 
 install: $(BIN) man/$(BIN).1 lib/chars.db
 	$(CMD)install -Dm755 $(BIN) $(DESTDIR)/$(PREFIX)/bin/$(BIN)
