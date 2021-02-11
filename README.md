@@ -57,7 +57,6 @@ is more fully described in the following two locations:
 
 **build dependencies**:
 - C99 compiler, GNU Make
-- `git`
 
 **tl;dr**:
 ```
