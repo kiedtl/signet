@@ -8,35 +8,40 @@ signet attempts to make it easy to visually compare hashes/data by generating a
 randomart-esque ASCII art:
 
 ```
-$ md5sum ./signet /usr/bin/cat
-abec4845b415da8d23408afbb4666608  ./signet
-7e9d213e404ad3bb82e4ebb2e1f2c1b3  /usr/bin/cat
+$ sha256sum ./signet.c ./matrix.c
+1abc0c20a9198bb971a1e610f712b7039e3243d8f0d18d6aa4d1d821a58f6ee8  ./signet.c
+71119e0e9132c7d943505e44995a38d2747f6be0db7beb4be77ffaca3d63a937  ./matrix.c
+$ sha256sum ./signet.c ./matrix.c | ./signet
 
-$ ./signet abec4845b415da8d23408afbb4666608
-+-----------------+
-|          . =oXXX|
-|           o o XX|
-|        . .     E|
-|         o       |
-|        S        |
-|                 |
-|                 |
-|                 |
-|                 |
-+-----------------+
+./signet.c
++--------------------+
+|              +*OSSS|
+|            . +o=SS@|
+|           . o E oX@|
+|          . o      o|
+|           +        |
+|          S         |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
++--------------------+
 
-$ signet 7e9d213e404ad3bb82e4ebb2e1f2c1b3
-+-----------------+
-|        o.+.o.XXE|
-|         + + . XX|
-|        . o     .|
-|         o       |
-|        S        |
-|                 |
-|                 |
-|                 |
-|                 |
-+-----------------+
+./matrix.c
++--------------------+
+|      .+==&SE%*##=. |
+|       .o+=@SBX&*o  |
+|           +oX .=   |
+|          +   o     |
+|         o .        |
+|          S         |
+|                    |
+|                    |
+|                    |
+|                    |
+|                    |
++--------------------+
 ```
 
 ## how?
@@ -51,8 +56,7 @@ is more fully described in the following two locations:
 ## where?
 
 **build dependencies**:
-- C99 compiler (tested with gcc)
-- GNU Make
+- C99 compiler, GNU Make
 - `git`
 
 **tl;dr**:
@@ -69,12 +73,6 @@ $ make clean all
 ## todo
 
 - manpage
-- ability to read from `stdin`
-
-## disclaimer
-
-This software is in beta; expect bugs. If you do use it, check hashes
-manually in addition to using signet.
 
 ## license
 
