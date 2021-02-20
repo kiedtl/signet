@@ -21,10 +21,9 @@ WARNING  = -Wall -Wpedantic -Wextra -Wold-style-definition -Wmissing-prototypes 
            -Wmissing-include-dirs -Wno-format-nonliteral -Wunused-parameter \
            -Wincompatible-pointer-types \
            -Werror=implicit-function-declaration -Werror=return-type
-DEF      = -DVERSION=\"$(VERSION)\"
 INC     = -I.
-DEF     =
-CFLAGS  = -std=c99 $(DEF) $(WARNING) $(INC) -funsigned-char
+DEF      = -D_DEFAULT_SOURCE -DVERSION=\"$(VERSION)\"
+CFLAGS  = -std=c99 $(DEF) $(WARNING) $(INC) $(DEF) -funsigned-char
 LDFLAGS = -fuse-ld=$(LD)
 
 all: man/$(BIN).1 debug
