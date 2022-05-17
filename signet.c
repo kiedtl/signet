@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdlib.h>
 
 /* dimensions of matrix. */
 static const size_t WIDTH  = 20;
@@ -19,18 +20,38 @@ static void (*const MOVEMENTS[])(size_t *) = {
 
 static _Bool istty = 0;
 
+static _Bool hexinput = 0;
+
 static void
 mkmatrix(char *data, size_t *matrix)
 {
 	size_t len = strlen(data);
 	size_t start = SIZE / 2, ptr = start;
 
+	if (hexinput) {
+		if (len % 2) { /* hex should have an even number of characters */
+			fprintf(stderr, "Invalid hex input\n");
+			exit(1);
+		}
+		len /= 2;
+	}
+
 	for (size_t i = 0; i < len; ++i) {
+		char byte;
+		if (hexinput) {
+			if (sscanf(&data[2 * i], "%2hhx", (unsigned char*)&byte) != 1) {
+				fprintf(stderr, "Invalid hex input\n");
+				exit(1);
+			}
+		} else {
+			byte = data[i];
+		}
+
 		unsigned char bits[] = {
-			data[i] >> 6,
-			(data[i] >> 4) & 3,
-			(data[i] >> 2) & 3,
-			data[i] >> 3,
+			byte >> 6,
+			(byte >> 4) & 3,
+			(byte >> 2) & 3,
+			byte & 3,
 		};
 
 		for (size_t c = 0; c < 3; ++c) {
@@ -115,12 +136,24 @@ main(int argc, char **argv)
 {
 	istty = isatty(STDOUT_FILENO);
 
-	if (argc == 1) {
+	int opt;
+	while ((opt = getopt(argc, argv, "x")) != -1) {
+		switch (opt) {
+			case 'x':
+				hexinput = 1;
+				break;
+			default:
+				fprintf(stderr, "Usage: %s [-x] [hash ...]\n", argv[0]);
+				return 1;
+		}
+	}
+
+	if (argc == optind) {
 		readstdin();
 		return 1;
 	}
 
-	for (size_t ctr = 1; ctr < (size_t)argc; ++ctr) {
+	for (size_t ctr = optind; ctr < (size_t)argc; ++ctr) {
 		size_t matrix[SIZE];
 		for (size_t i = 0; i < SIZE; ++i) matrix[i] = 0;
 
