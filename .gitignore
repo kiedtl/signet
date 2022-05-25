@@ -1,4 +1,5 @@
 **/*.*.swp
 *.o
+*.tar.xz
 signet
 man/signet.1
