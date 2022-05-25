@@ -21,7 +21,7 @@ static void (*const MOVEMENTS[])(size_t *) = {
 };
 
 static _Bool istty = false;
-static _Bool hexinput = false;
+static _Bool hexinput = true;
 
 /* char -> number in base 16. atoi for hex input. */
 static unsigned char
@@ -150,15 +150,15 @@ main(int argc, char **argv)
 	istty = isatty(STDOUT_FILENO);
 
 	int opt;
-	while ((opt = getopt(argc, argv, "hVx")) != -1) {
+	while ((opt = getopt(argc, argv, "hVa")) != -1) {
 		switch (opt) {
-		break; case 'x':
-			hexinput = true;
+		break; case 'a':
+			hexinput = false;
 		break; case 'V':
 			fprintf(stdout, "signet v"VERSION"\n");
 			return 0;
 		break; case 'h': default:
-			fprintf(stderr, "Usage: %s [-hV] [-x] [hash ...]\n", argv[0]);
+			fprintf(stderr, "Usage: %s [-hV] [-a] [hash ...]\n", argv[0]);
 			return opt == 'h' ? 0 : 1;
 		break;
 		}
