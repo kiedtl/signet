@@ -121,7 +121,12 @@ readstdin(void)
 				matrix[i] = 0;
 
 			mkmatrix(strsep(&bufptr, " "), matrix);
-			strsep(&bufptr, " ");
+
+			/* Stupid glibc strsep returns 0x1 instead of NULL
+			 * sometimes */
+			if (bufptr > 1) strsep(&bufptr, " ");
+			char *label = bufptr > 1 ? strsep(&bufptr, " ") : NULL;
+
 			display(strsep(&bufptr, " "),  matrix);
 
 			buf[0] = '\0', bufptr = p = (char *)&buf;
