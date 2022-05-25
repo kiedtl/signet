@@ -1,6 +1,8 @@
+#include <err.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
+#include <stdbool.h>
 #include <stdlib.h>
 
 /* dimensions of matrix. */
@@ -18,9 +20,23 @@ static void (*const MOVEMENTS[])(size_t *) = {
 	&right_up, &left_up, &right_down, &left_down,
 };
 
-static _Bool istty = 0;
+static _Bool istty = false;
+static _Bool hexinput = false;
 
-static _Bool hexinput = 0;
+/* char -> number in base 16. atoi for hex input. */
+static unsigned char
+hex(unsigned char input)
+{
+	if (input >= '0' && input <= '9') {
+		return input - '0';
+	} else if (input >= 'a' && input <= 'f') {
+		return 10 + input - 'a';
+	} else if (input >= 'A' && input <= 'F') {
+		return 10 + input - 'A';
+	} else {
+		errx(1, "0x%02x ('%c'): Invalid hex input.\n", input, input);
+	}
+}
 
 static void
 mkmatrix(char *data, size_t *matrix)
@@ -29,23 +45,14 @@ mkmatrix(char *data, size_t *matrix)
 	size_t start = SIZE / 2, ptr = start;
 
 	if (hexinput) {
-		if (len % 2) { /* hex should have an even number of characters */
-			fprintf(stderr, "Invalid hex input\n");
+		if (len % 2 != 0) { /* hex should have an even number of characters */
+			fprintf(stderr, "Invalid hex input.\n");
 			exit(1);
 		}
-		len /= 2;
 	}
 
-	for (size_t i = 0; i < len; ++i) {
-		char byte;
-		if (hexinput) {
-			if (sscanf(&data[2 * i], "%2hhx", (unsigned char*)&byte) != 1) {
-				fprintf(stderr, "Invalid hex input\n");
-				exit(1);
-			}
-		} else {
-			byte = data[i];
-		}
+	for (size_t i = 0; i < len;) {
+		char byte = hexinput ? (hex(data[i]) * 16) + hex(data[i + 1]) : data[i];
 
 		unsigned char bits[] = {
 			byte >> 6,
@@ -66,6 +73,8 @@ mkmatrix(char *data, size_t *matrix)
 			if (matrix[ptr] <= MAX_CELL_VALUE)
 				++matrix[ptr];
 		}
+
+		i += hexinput ? 2 : 1;
 	}
 
 	/* mark start/end position. */
@@ -117,17 +126,16 @@ readstdin(void)
 		break; case '\n':
 			*p = '\0';
 
-			for (size_t i = 0; i < SIZE; ++i)
-				matrix[i] = 0;
+			memset((void *)&matrix, 0x0, sizeof(matrix));
 
 			mkmatrix(strsep(&bufptr, " "), matrix);
 
 			/* Stupid glibc strsep returns 0x1 instead of NULL
 			 * sometimes */
-			if (bufptr > 1) strsep(&bufptr, " ");
-			char *label = bufptr > 1 ? strsep(&bufptr, " ") : NULL;
+			if ((size_t)bufptr > 1) strsep(&bufptr, " ");
+			char *label = (size_t)bufptr > 1 ? strsep(&bufptr, " ") : NULL;
 
-			display(strsep(&bufptr, " "),  matrix);
+			display(label, matrix);
 
 			buf[0] = '\0', bufptr = p = (char *)&buf;
 		break; default:
@@ -142,20 +150,20 @@ main(int argc, char **argv)
 	istty = isatty(STDOUT_FILENO);
 
 	int opt;
-	while ((opt = getopt(argc, argv, "x")) != -1) {
+	while ((opt = getopt(argc, argv, "hx")) != -1) {
 		switch (opt) {
-			case 'x':
-				hexinput = 1;
-				break;
-			default:
-				fprintf(stderr, "Usage: %s [-x] [hash ...]\n", argv[0]);
-				return 1;
+		break; case 'x':
+			hexinput = true;
+		break; case 'h': default:
+			fprintf(stderr, "Usage: %s [-x] [hash ...]\n", argv[0]);
+			return opt == 'h' ? 0 : 1;
+		break;
 		}
 	}
 
 	if (argc == optind) {
 		readstdin();
-		return 1;
+		return 0;
 	}
 
 	for (size_t ctr = optind; ctr < (size_t)argc; ++ctr) {
