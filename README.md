@@ -5,43 +5,43 @@
 ## what?
 
 signet attempts to make it easy to visually compare hashes/data by generating a
-randomart-esque ASCII art:
+randomart-esque ASCII art (from hexadecimal-encoded binary data):
 
 ```
 $ sha256sum ./signet.c ./matrix.c
-1abc0c20a9198bb971a1e610f712b7039e3243d8f0d18d6aa4d1d821a58f6ee8  ./signet.c
+fd627a963b7eace6f8737dddda36891d6686eee47ab671a87a6340890b10aa58  ./signet.c
 71119e0e9132c7d943505e44995a38d2747f6be0db7beb4be77ffaca3d63a937  ./matrix.c
 $ sha256sum ./signet.c ./matrix.c | ./signet
-
 ./signet.c
 +--------------------+
-|              +*OSSS|
-|            . +o=SS@|
-|           . o E oX@|
-|          . o      o|
-|           +        |
-|          S         |
 |                    |
 |                    |
 |                    |
-|                    |
-|                    |
+|            .       |
+|           . o      |
+|          S . E     |
+|     . + o .   .    |
+|  . . B +           |
+|o* + . *            |
+|=.X.=   .         . |
+|=**Bo+.            o|
 +--------------------+
 
 ./matrix.c
 +--------------------+
-|      .+==&SE%*##=. |
-|       .o+=@SBX&*o  |
-|           +oX .=   |
-|          +   o     |
-|         o .        |
-|          S         |
-|                    |
-|                    |
-|                    |
-|                    |
-|                    |
+|  .. o=o.=+=+       |
+|..  . ++  Oo        |
+|..   . . o o        |
+|  .   .   .         |
+| + .     o          |
+|. +     . S         |
+| .                  |
+|. .                 |
+| + .                |
+|o = E .             |
+|.+.o.o             .|
 +--------------------+
+
 ```
 
 ## how?
@@ -60,10 +60,12 @@ is more fully described in the following two locations:
 
 **tl;dr**:
 ```
-$ git clone git://github.com/lptstr/signet.git
+$ git clone git://github.com/kiedtl/signet.git
 $ make clean all
 # make install
 ```
+
+You can also download a tarball from the releases if you wish.
 
 ## why?
 
@@ -71,7 +73,8 @@ $ make clean all
 
 ## todo
 
-- manpage
+- support for `$NO_COLOR`
+- Windows support
 
 ## license
 

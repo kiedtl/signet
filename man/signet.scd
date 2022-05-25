@@ -6,8 +6,8 @@ signet(1)
 
 # SYNOPSIS
 
-*signet* [-x] [HASH]...++
-shasum [FILE]... | *signet* [-x]++
+*signet* [-a] [HASH]...++
+shasum [FILE]... | *signet* [-a]++
 *signet* [-hV]
 
 # DESCRIPTION
@@ -18,7 +18,7 @@ to the one used by SSH when generating "randomart" ASCII art for public keys.
 
 # EXAMPLES
 
-$ *signet thisisatest*
+$ *signet -a thisisatest*
 ```
 +--------------------+
 | E .                |
@@ -35,7 +35,7 @@ $ *signet thisisatest*
 +--------------------+
 ```
 
-$ *md5sum /usr/bin/cat | signet -x*
+$ *md5sum /usr/bin/cat | signet*
 ```
 /usr/bin/cat
 +--------------------+
@@ -54,7 +54,7 @@ $ *md5sum /usr/bin/cat | signet -x*
 ```
 
 
-$ *md5sum /usr/bin/cat | signet*
+$ *md5sum /usr/bin/cat | signet -a*
 ```
 /usr/bin/cat
 +--------------------+
@@ -80,9 +80,9 @@ $ *md5sum /usr/bin/cat | signet*
 *-V*
 	Print signet's version and exit.
 
-*-x*
-	Interpret the input as hexadecimal-encoded binary data. This often
-	produces more recognizable input.
+*-a*
+	Interpret the input as raw bytes, instead of as hexadecimal-encoded
+	binary data. For ASCII, this often produces worse output.
 
 # CAVEATS
 
@@ -90,7 +90,7 @@ It is possible that two completely different hashes will generate very
 similar-looking ASCII art. It's always best to double-check hashes both
 with and without the use of signet.
 
-Additionally, usage without the *-x* flag tends to produce mostly tornado-shaped
+Additionally, usage with the *-a* flag tends to produce mostly tornado-shaped
 output that's biased to the top corners (see the example outputs above).
 
 # AUTHORS
