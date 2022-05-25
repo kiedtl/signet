@@ -10,7 +10,7 @@ include config.mk
 
 VERSION = 0.3.0
 BIN     = signet
-PKGNAME  = $(NAME)-$(shell uname -s)-$(shell uname -m)-$(VERSION)
+PKGNAME  = $(BIN)-$(shell uname -s)-$(shell uname -m)-$(VERSION)
 
 SRC     = signet.c
 OBJ     = $(SRC:.c=.o)
@@ -52,14 +52,15 @@ clean:
 	$(CMD)rm -f $(BIN) $(OBJ) man/$(BIN).1
 	$(CMD)rm -rf dist/ *.xz
 
-dist: release $(BIN).1
+dist: release man/$(BIN).1
+	$(CMD)rm -rf $(PKGNAME)
 	$(CMD)mkdir $(PKGNAME)
 	$(CMD)cp $(BIN)   $(PKGNAME)
-	$(CMD)cp $(BIN).1 $(PKGNAME)
+	$(CMD)cp man/$(BIN).1 $(PKGNAME)
 	$(CMD)tar -cf - $(PKGNAME) | xz -qcT0 > $(PKGNAME).tar.xz
 	$(CMD)rm -rf $(PKGNAME)
 
-install: $(BIN) man/$(BIN).1 lib/chars.db
+install: $(BIN) man/$(BIN).1
 	$(CMD)install -Dm755 $(BIN) $(DESTDIR)/$(PREFIX)/bin/$(BIN)
 	$(CMD)install -Dm644 man/$(BIN).1 $(DESTDIR)/$(PREFIX)/share/man/man1/$(BIN).1
 
