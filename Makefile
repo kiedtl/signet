@@ -1,6 +1,6 @@
 #
 # signet: easily compare TLS certificates, hashes, etc
-# https://github.com/lptstr/signet
+# https://github.com/kiedtl/signet
 #
 # (c) Kiëd Llaentenn and contributors
 # See the LICENSE.md file for more information
@@ -8,7 +8,7 @@
 
 include config.mk
 
-VERSION = 0.2.0
+VERSION = 0.3.0
 BIN     = signet
 PKGNAME  = $(NAME)-$(shell uname -s)-$(shell uname -m)-$(VERSION)
 

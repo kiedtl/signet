@@ -150,12 +150,15 @@ main(int argc, char **argv)
 	istty = isatty(STDOUT_FILENO);
 
 	int opt;
-	while ((opt = getopt(argc, argv, "hx")) != -1) {
+	while ((opt = getopt(argc, argv, "hVx")) != -1) {
 		switch (opt) {
 		break; case 'x':
 			hexinput = true;
+		break; case 'V':
+			fprintf(stdout, "signet v"VERSION"\n");
+			return 0;
 		break; case 'h': default:
-			fprintf(stderr, "Usage: %s [-x] [hash ...]\n", argv[0]);
+			fprintf(stderr, "Usage: %s [-hV] [-x] [hash ...]\n", argv[0]);
 			return opt == 'h' ? 0 : 1;
 		break;
 		}
