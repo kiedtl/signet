@@ -126,7 +126,7 @@ readstdin(void)
 		break; case '\n':
 			*p = '\0';
 
-			memset((void *)&matrix, 0x0, sizeof(matrix));
+			memset(matrix, 0x0, sizeof(matrix));
 
 			mkmatrix(strsep(&bufptr, " "), matrix);
 
