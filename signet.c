@@ -34,7 +34,7 @@ hex(unsigned char input)
 	} else if (input >= 'A' && input <= 'F') {
 		return 10 + input - 'A';
 	} else {
-		errx(1, "0x%02x ('%c'): Invalid hex input.", input, input);
+		errx(1, "0x%02x ('%c'): Invalid hex input (-a to disable).", input, input);
 	}
 }
 
@@ -47,7 +47,7 @@ mkmatrix(char *data, size_t *matrix)
 	if (hexinput) {
 		if (len % 2 != 0) {
 			/* hex should have an even number of characters */
-			errx(1, "Invalid hex input.");
+			errx(1, "Invalid hex input (-a to disable).");
 		}
 	}
 
