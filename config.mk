@@ -16,5 +16,5 @@ LD = bfd
 
 RELEASE_CFLAGS  = -Os -mtune=native -march=native 
 RELEASE_LDFLAGS = -flto -s
-DEBUG_CFLAGS    = -Og -ggdb -fsanitize=address
+DEBUG_CFLAGS    = -Og -ggdb
 DEBUG_LDFLAGS   =
